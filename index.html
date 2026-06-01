@@ -1,54 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERROR: HUMAN SHAPE DETECTED</title>
+    <title>STILL HUMAN · MANIFESTO</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background-color: #000000;
-            color: #FF0000;
-            font-family: 'Courier New', monospace;
-            font-size: clamp(1rem, 6vw, 2rem);
-            font-weight: bold;
-            height: 100vh;
+            background-color: #000000;   /* 纯黑背景 */
+            font-family: 'Inter', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 1rem;
-        }
-        .error-container {
-            border: 2px solid #FF0000;
             padding: 2rem;
-            background-color: #111;
         }
-        .blink {
-            animation: blink-animation 1s steps(2, start) infinite;
+
+        .manifesto {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
         }
-        @keyframes blink-animation {
-            to {
-                visibility: hidden;
-            }
+
+        /* 超大标题区域 — 不对称布局 */
+        .error-major {
+            font-size: clamp(3rem, 12vw, 7rem);
+            font-weight: 700;
+            line-height: 0.95;
+            color: #ffffff;            /* 白色主体 */
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            margin-bottom: 2rem;
         }
-        hr {
-            border-color: #FF0000;
-            margin: 1rem 0;
+
+        .error-major .red {
+            color: #e53e30;            /* 鲜红，不刺眼但有力 */
+            display: block;
+            margin-left: -0.05em;
+        }
+
+        .error-major .block {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 500;
+            color: #cccccc;            /* 柔白灰，区分层次 */
+            letter-spacing: -0.02em;
+        }
+
+        /* 副线 — 小字号，拉出层次 */
+        .meta-line {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: #e53e30;            /* 红色线条 */
+            margin-bottom: 3rem;
+            letter-spacing: 1.5px;
+            border-left: 2px solid #e53e30;
+            padding-left: 1rem;
+        }
+
+        /* 正文 — 纤细克制，大量留白 */
+        .body-text {
+            font-size: 1rem;
+            font-weight: 350;
+            color: #dddddd;            /* 浅灰白 */
+            line-height: 1.7;
+            max-width: 70%;
+            margin: 2.5rem 0;
+        }
+
+        /* 系统状态行 */
+        .system-state {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #e53e30;            /* 红色 */
+            margin-top: 3rem;
+            border-top: 1px solid #2a2a2a;
+            padding-top: 1.5rem;
+            display: inline-block;
+        }
+
+        .artist-note {
+            position: fixed;
+            bottom: 16px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.6rem;
+            font-family: monospace;
+            color: #3a3a3a;            /* 深灰，不抢眼 */
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1.5rem; }
+            .body-text { max-width: 100%; }
         }
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <p>ERROR:<br>
-        HUMAN SHAPE DETECTED.<br>
-        UNABLE TO PROCESS.</p>
-        <hr>
-        <p class="blink">>> SYSTEM HALTED <<</p>
+<div class="manifesto">
+    <div class="meta-line">// POSTERHEROES 15</div>
+    <div class="error-major">
+        ERROR:<br>
+        <span class="red">HUMAN SHAPE</span><br>
+        <span class="block">DETECTED.</span>
     </div>
+    <div class="body-text">
+        UNABLE TO PROCESS.<br>
+        The algorithmic model cannot resolve<br>
+        the silhouette of choice.
+    </div>
+    <div class="system-state">
+        > SYSTEM STATE : STILL HUMAN
+    </div>
+</div>
+<div class="artist-note">
+    The act of tearing is the shape of choice.
+</div>
 </body>
 </html>
