@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERROR: HUMAN SHAPE DETECTED</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #000000;
+            color: #FF0000;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(1rem, 6vw, 2rem);
+            font-weight: bold;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+        }
+        .error-container {
+            border: 2px solid #FF0000;
+            padding: 2rem;
+            background-color: #111;
+        }
+        .blink {
+            animation: blink-animation 1s steps(2, start) infinite;
+        }
+        @keyframes blink-animation {
+            to {
+                visibility: hidden;
+            }
+        }
+        hr {
+            border-color: #FF0000;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <p>ERROR:<br>
+        HUMAN SHAPE DETECTED.<br>
+        UNABLE TO PROCESS.</p>
+        <hr>
+        <p class="blink">>> SYSTEM HALTED <<</p>
+    </div>
+</body>
+</html>
