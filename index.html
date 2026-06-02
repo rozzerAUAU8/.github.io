@@ -12,75 +12,194 @@
         }
 
         body {
-            background-color: #000000;   /* 纯黑背景 */
+            background-color: #000000;
             font-family: 'Inter', 'Helvetica Neue', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 水平扫描线 */
+        .ai-scan {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(229, 62, 48, 0.35),
+                rgba(229, 62, 48, 0.85),
+                rgba(229, 62, 48, 0.35),
+                transparent);
+            filter: blur(1px);
+            animation: scanMove 12s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes scanMove {
+            0% { top: 0%; left: -100%; }
+            50% { top: 80%; left: 0%; }
+            100% { top: 100%; left: 100%; }
         }
 
         .manifesto {
             max-width: 900px;
             width: 100%;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
-        /* 超大标题区域 — 不对称布局 */
+        /* 每个字符独立抖动 + 增强故障效果（提高20%强度） */
+        .char {
+            display: inline-block;
+            position: relative;
+            animation: charShake 0.2s infinite ease-in-out;
+            /* 增强阴影偏移和颜色强度 */
+            text-shadow: 
+                0.03em 0 0 rgba(229, 62, 48, 0.5),
+                -0.03em -0.02em 0 rgba(0, 255, 255, 0.2),
+                0.02em 0.03em 0 rgba(255, 0, 255, 0.2);
+        }
+
+        /* 每个字符的伪元素错位增强 */
+        .char::before,
+        .char::after {
+            content: attr(data-char);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+            opacity: 0.5;   /* 提升不透明度 */
+        }
+
+        .char::before {
+            color: #e53e30;
+            z-index: -1;
+            animation: glitchShift 0.22s infinite alternate;
+        }
+
+        .char::after {
+            color: #88ccff;
+            z-index: -2;
+            animation: glitchShift2 0.28s infinite alternate-reverse;
+        }
+
+        /* 位移幅度增加20% */
+        @keyframes glitchShift {
+            0% { transform: translate(0.6px, -0.4px); }
+            100% { transform: translate(-0.4px, 0.6px); }
+        }
+
+        @keyframes glitchShift2 {
+            0% { transform: translate(-0.5px, 0.3px); }
+            100% { transform: translate(0.4px, -0.5px); }
+        }
+
+        /* 抖动幅度略微增加 */
+        @keyframes charShake {
+            0% { transform: translate(0px, 0px); }
+            25% { transform: translate(0.4px, -0.25px); }
+            50% { transform: translate(-0.25px, 0.25px); }
+            75% { transform: translate(0.15px, -0.35px); }
+            100% { transform: translate(0px, 0px); }
+        }
+
+        /* 与扫描线同步的脉冲增强（强度+20%） */
+        .glitch-pulse {
+            animation: scanGlitch 12s infinite;
+        }
+
+        @keyframes scanGlitch {
+            0%, 45%, 55%, 100% { text-shadow: 0 0 0px rgba(229,62,48,0); }
+            48% { text-shadow: -0.8px 0.5px 2px rgba(229,62,48,0.8), 0.5px -0.4px 2px rgba(0,255,255,0.5); }
+            50% { text-shadow: 0.8px -0.5px 3px rgba(229,62,48,1), -0.4px 0.6px 2px rgba(255,0,255,0.4); }
+            52% { text-shadow: 0 0 0px rgba(229,62,48,0); }
+        }
+
+        /* 主标题样式 */
         .error-major {
             font-size: clamp(3rem, 12vw, 7rem);
             font-weight: 700;
-            line-height: 0.95;
-            color: #ffffff;            /* 白色主体 */
+            line-height: 1.1;
+            color: #ffffff;
             text-transform: uppercase;
             letter-spacing: -0.03em;
             margin-bottom: 2rem;
         }
 
         .error-major .red {
-            color: #e53e30;            /* 鲜红，不刺眼但有力 */
-            display: block;
-            margin-left: -0.05em;
+            color: #e53e30;
+            display: inline-block;
         }
 
         .error-major .block {
-            display: block;
             font-size: 0.85em;
             font-weight: 500;
-            color: #cccccc;            /* 柔白灰，区分层次 */
+            color: #cccccc;
             letter-spacing: -0.02em;
         }
 
-        /* 副线 — 小字号，拉出层次 */
         .meta-line {
             font-family: 'Fira Code', monospace;
             font-size: 0.75rem;
-            color: #e53e30;            /* 红色线条 */
+            color: #e53e30;
             margin-bottom: 3rem;
             letter-spacing: 1.5px;
             border-left: 2px solid #e53e30;
             padding-left: 1rem;
+            animation: borderPulse 3s ease-in-out infinite;
         }
 
-        /* 正文 — 纤细克制，大量留白 */
+        @keyframes borderPulse {
+            0% { border-left-color: #e53e30; opacity: 0.7; }
+            50% { border-left-color: #ff6b5c; opacity: 1; }
+            100% { border-left-color: #e53e30; opacity: 0.7; }
+        }
+
         .body-text {
             font-size: 1rem;
             font-weight: 350;
-            color: #dddddd;            /* 浅灰白 */
+            color: #dddddd;
             line-height: 1.7;
             max-width: 70%;
             margin: 2.5rem 0;
         }
 
-        /* 系统状态行 */
         .system-state {
             font-family: 'Fira Code', monospace;
             font-size: 0.8rem;
-            color: #e53e30;            /* 红色 */
+            color: #e53e30;
             margin-top: 3rem;
             border-top: 1px solid #2a2a2a;
             padding-top: 1.5rem;
             display: inline-block;
+            position: relative;
+        }
+
+        .ai-indicator {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #e53e30;
+            border-radius: 50%;
+            margin-left: 8px;
+            animation: indicatorBreath 2s ease-in-out infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes indicatorBreath {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.2; transform: scale(0.8); }
         }
 
         .artist-note {
@@ -91,7 +210,27 @@
             text-align: center;
             font-size: 0.6rem;
             font-family: monospace;
-            color: #3a3a3a;            /* 深灰，不抢眼 */
+            color: #3a3a3a;
+            z-index: 3;
+        }
+
+        .ai-subnote {
+            position: fixed;
+            bottom: 35px;
+            right: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.55rem;
+            color: #e53e30;
+            opacity: 0.4;
+            animation: slowFade 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        @keyframes slowFade {
+            0% { opacity: 0.15; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.15; }
         }
 
         @media (max-width: 700px) {
@@ -101,24 +240,65 @@
     </style>
 </head>
 <body>
-<div class="manifesto">
-    <div class="meta-line">// POSTERHEROES 15</div>
-    <div class="error-major">
-        ERROR:<br>
-        <span class="red">HUMAN SHAPE</span><br>
-        <span class="block">DETECTED.</span>
+    <div class="ai-scan"></div>
+
+    <div class="manifesto">
+        <div class="meta-line">// POSTERHEROES 15</div>
+        <div class="error-major" id="error-major"></div>
+        <div class="body-text" id="body-text"></div>
+        <div class="system-state" id="system-state"></div>
     </div>
-    <div class="body-text">
-        UNABLE TO PROCESS.<br>
-        The algorithmic model cannot resolve<br>
-        the silhouette of choice.
+
+    <div class="artist-note">
+        The act of tearing is the shape of choice.
     </div>
-    <div class="system-state">
-        > SYSTEM STATE : STILL HUMAN
+    <div class="ai-subnote">
+        // AI INTERPRETATION ACTIVE //
     </div>
-</div>
-<div class="artist-note">
-    The act of tearing is the shape of choice.
-</div>
+
+    <script>
+        // 辅助函数：将文本拆分为带 data-char 属性的字符span
+        function wrapWithGlitchSpans(text) {
+            return text.split('').map(ch => {
+                if (ch === ' ') return '<span style="display: inline-block; width: 0.3em;"> </span>';
+                const safeChar = ch === '&' ? '&amp;' : (ch === '<' ? '&lt;' : (ch === '>' ? '&gt;' : ch));
+                return `<span class="char" data-char="${safeChar}">${safeChar}</span>`;
+            }).join('');
+        }
+
+        // 构建主标题
+        const errorMajorDiv = document.getElementById('error-major');
+        const errorHtml = `
+            <div style="line-height:1.2;">${wrapWithGlitchSpans("ERROR:")}</div>
+            <div style="line-height:1.2;"><span class="red">${wrapWithGlitchSpans("HUMAN SHAPE")}</span></div>
+            <div style="line-height:1.2;"><span class="block">${wrapWithGlitchSpans("DETECTED.")}</span></div>
+        `;
+        errorMajorDiv.innerHTML = errorHtml;
+
+        // 正文拆分
+        const bodyTextDiv = document.getElementById('body-text');
+        const bodyOriginal = "UNABLE TO PROCESS.<br>The algorithmic model cannot resolve<br>the silhouette of choice.";
+        const bodyLines = bodyOriginal.split('<br>');
+        bodyTextDiv.innerHTML = bodyLines.map(line => {
+            if (line.trim() === "") return "";
+            return `<div style="margin-bottom:0.5rem;">${wrapWithGlitchSpans(line)}</div>`;
+        }).join('');
+
+        // 系统状态行拆分
+        const sysStateSpan = document.getElementById('system-state');
+        const sysText = "> SYSTEM STATE : STILL HUMAN ";
+        const sysHTML = wrapWithGlitchSpans(sysText);
+        const indicator = '<span class="ai-indicator"></span>';
+        sysStateSpan.innerHTML = sysHTML + indicator;
+
+        // 为每个字符添加随机动画延迟和时长
+        const chars = document.querySelectorAll('.char');
+        chars.forEach((ch, idx) => {
+            const delay = (idx * 0.015) % 0.2;
+            ch.style.animationDelay = `${delay}s`;
+            const duration = 0.15 + Math.random() * 0.1;
+            ch.style.animationDuration = `${duration}s`;
+        });
+    </script>
 </body>
 </html>
