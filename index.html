@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STILL HUMAN · MANIFESTO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>STILL HUMAN · ASCII GHOST</title>
     <style>
         * {
             margin: 0;
@@ -13,292 +13,308 @@
 
         body {
             background-color: #000000;
-            font-family: 'Inter', 'Helvetica Neue', sans-serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            overflow-x: auto;
             padding: 2rem;
-            position: relative;
-            overflow-x: hidden;
         }
 
-        /* 水平扫描线 */
-        .ai-scan {
-            position: fixed;
+        /* 主要内容的容器，控制整体消失/出现 */
+        #mainContent {
+            transition: opacity 0.05s ease; /* 瞬间消失，平滑出现可设极短时间 */
+            opacity: 1;
+        }
+
+        .ascii-container {
+            position: relative;
+            display: inline-block;
+            background: #000;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        pre {
+            margin: 0;
+            padding: 0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            letter-spacing: 0px;
+            color: #33ffcc;
+            text-shadow: 0 0 3px #33ffcc;
+            background: transparent;
+            transition: all 0.05s linear;
+        }
+
+        .glitch-pre {
+            animation: rgbSplit 0.15s infinite alternate, textShake 0.08s infinite alternate;
+        }
+
+        @keyframes rgbSplit {
+            0% { text-shadow: -2px 0 0 #ff00cc, 2px 0 0 #00ffff; }
+            100% { text-shadow: 2px 0 0 #ff00cc, -2px 0 0 #00ffff; }
+        }
+
+        @keyframes textShake {
+            0% { transform: translate(0px, 0px); }
+            25% { transform: translate(0.5px, -0.5px); }
+            50% { transform: translate(-0.5px, 0.5px); }
+            75% { transform: translate(0.3px, -0.3px); }
+            100% { transform: translate(0px, 0px); }
+        }
+
+        .scan-line {
+            position: absolute;
             top: 0;
-            left: -100%;
-            width: 200%;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(229, 62, 48, 0.35),
-                rgba(229, 62, 48, 0.85),
-                rgba(229, 62, 48, 0.35),
-                transparent);
-            filter: blur(1px);
-            animation: scanMove 12s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes scanMove {
-            0% { top: 0%; left: -100%; }
-            50% { top: 80%; left: 0%; }
-            100% { top: 100%; left: 100%; }
-        }
-
-        .manifesto {
-            max-width: 900px;
+            left: 0;
             width: 100%;
-            margin: 0 auto;
-            position: relative;
+            height: 12px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.6), transparent);
+            filter: blur(4px);
+            opacity: 0.7;
+            pointer-events: none;
+            animation: scanMove 3s linear infinite;
             z-index: 2;
         }
 
-        /* 每个字符独立抖动 + 增强故障效果（提高20%强度） */
-        .char {
-            display: inline-block;
-            position: relative;
-            animation: charShake 0.2s infinite ease-in-out;
-            /* 增强阴影偏移和颜色强度 */
-            text-shadow: 
-                0.03em 0 0 rgba(229, 62, 48, 0.5),
-                -0.03em -0.02em 0 rgba(0, 255, 255, 0.2),
-                0.02em 0.03em 0 rgba(255, 0, 255, 0.2);
+        @keyframes scanMove {
+            0% { top: -5%; }
+            100% { top: 105%; }
         }
 
-        /* 每个字符的伪元素错位增强 */
-        .char::before,
-        .char::after {
-            content: attr(data-char);
+        .noise-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: transparent;
+            background: repeating-radial-gradient(circle at 20% 40%, rgba(0, 255, 255, 0.08) 0px, rgba(0, 255, 255, 0.08) 2px, transparent 2px, transparent 6px);
             pointer-events: none;
-            opacity: 0.5;   /* 提升不透明度 */
+            mix-blend-mode: screen;
+            animation: flicker 0.2s infinite;
         }
 
-        .char::before {
-            color: #e53e30;
-            z-index: -1;
-            animation: glitchShift 0.22s infinite alternate;
+        @keyframes flicker {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.25; }
         }
 
-        .char::after {
-            color: #88ccff;
-            z-index: -2;
-            animation: glitchShift2 0.28s infinite alternate-reverse;
-        }
-
-        /* 位移幅度增加20% */
-        @keyframes glitchShift {
-            0% { transform: translate(0.6px, -0.4px); }
-            100% { transform: translate(-0.4px, 0.6px); }
-        }
-
-        @keyframes glitchShift2 {
-            0% { transform: translate(-0.5px, 0.3px); }
-            100% { transform: translate(0.4px, -0.5px); }
-        }
-
-        /* 抖动幅度略微增加 */
-        @keyframes charShake {
-            0% { transform: translate(0px, 0px); }
-            25% { transform: translate(0.4px, -0.25px); }
-            50% { transform: translate(-0.25px, 0.25px); }
-            75% { transform: translate(0.15px, -0.35px); }
-            100% { transform: translate(0px, 0px); }
-        }
-
-        /* 与扫描线同步的脉冲增强（强度+20%） */
-        .glitch-pulse {
-            animation: scanGlitch 12s infinite;
-        }
-
-        @keyframes scanGlitch {
-            0%, 45%, 55%, 100% { text-shadow: 0 0 0px rgba(229,62,48,0); }
-            48% { text-shadow: -0.8px 0.5px 2px rgba(229,62,48,0.8), 0.5px -0.4px 2px rgba(0,255,255,0.5); }
-            50% { text-shadow: 0.8px -0.5px 3px rgba(229,62,48,1), -0.4px 0.6px 2px rgba(255,0,255,0.4); }
-            52% { text-shadow: 0 0 0px rgba(229,62,48,0); }
-        }
-
-        /* 主标题样式 */
-        .error-major {
-            font-size: clamp(3rem, 12vw, 7rem);
-            font-weight: 700;
-            line-height: 1.1;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: -0.03em;
-            margin-bottom: 2rem;
-        }
-
-        .error-major .red {
-            color: #e53e30;
-            display: inline-block;
-        }
-
-        .error-major .block {
-            font-size: 0.85em;
-            font-weight: 500;
-            color: #cccccc;
-            letter-spacing: -0.02em;
-        }
-
-        .meta-line {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.75rem;
-            color: #e53e30;
-            margin-bottom: 3rem;
-            letter-spacing: 1.5px;
-            border-left: 2px solid #e53e30;
-            padding-left: 1rem;
-            animation: borderPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes borderPulse {
-            0% { border-left-color: #e53e30; opacity: 0.7; }
-            50% { border-left-color: #ff6b5c; opacity: 1; }
-            100% { border-left-color: #e53e30; opacity: 0.7; }
-        }
-
-        .body-text {
-            font-size: 1rem;
-            font-weight: 350;
-            color: #dddddd;
-            line-height: 1.7;
-            max-width: 70%;
-            margin: 2.5rem 0;
-        }
-
-        .system-state {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
-            color: #e53e30;
-            margin-top: 3rem;
-            border-top: 1px solid #2a2a2a;
-            padding-top: 1.5rem;
-            display: inline-block;
-            position: relative;
-        }
-
-        .ai-indicator {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: #e53e30;
-            border-radius: 50%;
-            margin-left: 8px;
-            animation: indicatorBreath 2s ease-in-out infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes indicatorBreath {
-            0% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.2; transform: scale(0.8); }
-        }
-
-        .artist-note {
-            position: fixed;
-            bottom: 16px;
-            left: 0;
-            right: 0;
+        .info {
+            margin-top: 32px;
             text-align: center;
-            font-size: 0.6rem;
             font-family: monospace;
-            color: #3a3a3a;
-            z-index: 3;
+            letter-spacing: 2px;
         }
 
-        .ai-subnote {
-            position: fixed;
-            bottom: 35px;
-            right: 20px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.55rem;
-            color: #e53e30;
-            opacity: 0.4;
-            animation: slowFade 6s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 3;
+        .error-line {
+            color: #ff3366;
+            font-size: 1rem;
+            font-weight: bold;
+            animation: blink 1s step-end infinite;
         }
 
-        @keyframes slowFade {
-            0% { opacity: 0.15; }
-            50% { opacity: 0.6; }
-            100% { opacity: 0.15; }
+        .slogan {
+            color: #33ffcc;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            opacity: 0.8;
         }
 
-        @media (max-width: 700px) {
-            body { padding: 1.5rem; }
-            .body-text { max-width: 100%; }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        button {
+            margin-top: 24px;
+            background: transparent;
+            border: 1px solid #33ffcc;
+            color: #33ffcc;
+            padding: 6px 20px;
+            font-family: monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 30px;
+        }
+        button:hover {
+            background: #33ffcc20;
+            box-shadow: 0 0 10px #33ffcc;
+        }
+
+        @media (max-width: 800px) {
+            pre { font-size: 8px; }
+            .ascii-container { padding: 12px; }
         }
     </style>
 </head>
 <body>
-    <div class="ai-scan"></div>
-
-    <div class="manifesto">
-        <div class="meta-line">// POSTERHEROES 15</div>
-        <div class="error-major" id="error-major"></div>
-        <div class="body-text" id="body-text"></div>
-        <div class="system-state" id="system-state"></div>
+<div id="mainContent">
+    <div class="ascii-container" id="glitchContainer">
+        <div class="scan-line"></div>
+        <div class="noise-overlay"></div>
+        <pre id="asciiArt" class="glitch-pre">::  -   : :    = : :.     .   +   : +       - :  :          .    =          =   ==       +
++    = =  +    +  :.:+.    =    =   - -:   .: +  =   . - : .    .:   :   - -   .  : : ::   
+      :=+. :- . +    :    -  =      +-      = L   =       .:    .         --  =   .   +-   
+                =    : ..    :   = =-- T%E #**PDOEPTT=            = +.+ -  - : : +    =  = 
+  .   =- +  +.--. :       -    +L  .COL#@@D@#@@@@@P@T*O%    =            : -  =         +: 
+   : .  =    :   .      - .+  + TF*DO@@RED#@@@@@#@@@@@@@LL  :: +=  :..      .      -   -   
+         + :-   :   -.        TL#O@@RO@@#@DD@@D@@R@@@@@@@F   . .  = -    : -   :     +  +: 
+    +. -         == -    : :++TL@R#@@@@@R@@@@@@@@@@@@@@RD@E.  L -              .        :  
+    .           : : =    : LI.@E@@@@@R@@ORR@@@@@@@@@@@#DD@@RO*    =       +       ::      :
+ . :  . -  .      =    =   L F@@@@##@O@#@@@@@@@@@#@@@@D#@@@#@@:T               :           
+:  -    .     + +        = +@@@@@@O@@@@@@@@@@@R@@D@##@@@@@@@R@F#=       .      -++    :.   
+   =        = =           CL#@@@@@@D#O@R#@@@#@@R@R@@@#@#@@@@@D@PT   :       =  + -    ::-  
+     +.        -   : = -.==R@O@@@E@@E@O@@@@RR@R@@@@@@@@@@@#@@@##R%       - .  =: .       + 
+    .       -=   :  .  -=C%@@@@@@R#E#@R@@@@@@@@@@@@@@@@@@@@#@#@D@.   +   .   -      .     -
++-   .   -   =  +        L#R@@@@@ORR@@@@@@R@@E@%R@P@R@#R@@@@@@D@@LL    =:  -        =  - . 
+ =  .  =  :..       + =  %I@@@#@@@@@@DP#%FRDOPRRR=RRR@ED@#@@@@@D@P=:  :   - :    :  -     :
++    .   -      : -    *-E@P@@@@@DFDPCD#F==EDC.I.D=#OR#C@DR@#@@@@@T             . = .      
+   + :=  . =  : =  : . =%@@@@D@P#LF-::::P%L   :C=L:+TPLIDR#@@#O@RDC+: :+ : -    +-   -    +
++    :  -   -+   =+=  - -D@@@@@EFD=+C+:. -:-* .  ..-..=OIO@PD@@O@%F   -        .= .   ::   
+ :  .:   +   +=  .     :T*R@@R@I=OF+..FT*.L. T.:*C-LC:PP=CT%#@@R@%*C=:     = = +    -:     
+          - =  - :-     :@O@@#@RLP*.  L: =+C T*- %I:C:PCO%#OP@EDOPFTL    -     .     =-= :+
+  =.: =-:  +   -.:  :+: -%@@@@DR# + T ..-L. =*.L - -  LEPPCFE@@#@O+-= .  .  :   ::=+  .- + 
+   :  .= - +     . . = :LLD@@@@*=... I L :L -TL * C%.+%L*DOP%F@D%ET-    - :+  +.   =     : 
+   +-    ::=:+= -        PRO@D@FOCL* :I .=L   -T-CECF=%ITIFD#@E@%T    .      =        -  - 
+.  :        -     = -   =T#E%P*F:.F:-..FFP:-.=  -.CTFL+FLPD%%R#F@TL   =      .    :  -  :: 
+  : +      :       :     L =@@E+CL-L+F -*IC-T. :.I :%L.%#T%EOC#%RP.FL - -::     = .  +  +  
+=  - :  - -- -        = =- C*%L*%*-L+L%LDP=:.. =..D%OTEI*%R*RRPPIFD-        =   = =   :    
+   + : -.     . = :-     .LTRROTEFPCLD%E++DI.:IP#=LPPPRT#+O#PE@FRL=- .=  +       - . + +   
+     .  + ..  :         -+..ERC@PT-.P%+DTL+:+#E*E:PEP -%*==CTP@R%ED%+     .  :   +=    + + 
+      +            :    -.-I%TD@LF+.P:F:CC=*-P=+=#C-%I LP+TO#RP#DOE .  +      . . -  -     
+  :+  +   +         .      *RFDPDILFC- =CLF:F-:TPT=L%=  F C:ORI#F*:   -. -        =   +-  .
+ -      +=  =  =- - = =  + T+#+CL  .- .+.=CTP. .T+TEC I-F=O-=%#RT#I        .           :+  
+ --=      +    -    .   = * -IPF FI - *:- *=I-+C+FOPPL +*F+ET#RRRFC= :     =     .   =     
+ -    .   .-   =+  +  :  :*CE*T= .T*T  * .CI  - ITC- C. L*FT*DD+%: =   +  +.        = =    
+=    ++ .   -       :   .   %: IL .-+T  * -:TLCI=+PE +-.-.FP+*+O   =    :- =   -  .      : 
+  ..            := -   : :L * *T . =C:* L F:F+*P.EF*I  T-::C%-DP- =       -+-  - = .=      
+  -     -:  .   =  -       .L   . : T. -+ +  =*C  :C- IT  LL:TEL.-    -  :: =    ... --- : 
+ + ++    .   -             ==- :IT: : -T:: L -  FI.I +++T%-C*-L    -=+ +  + + :      .    .
+ :   :  : -   :       . +   + L=- =:I  ++=F.*FI*=II%*--C*%..O%        ==- :+=    +       = 
+= +  := =       - . +   -      L--TT-  F= %E:L:F:+:**E:+T:IIFC=+    -   :-    +=           
+    -      -     .      =      --==I   -.++ I:::T*+EF-:=T:FLI   .    ++   -   = -:    :    
+ ..     .      . .        +   -L-C =*: :*I LTC--F:=+:FC.O:.*T     =.   +     :: .=    = =- 
+      +.    :  .   - =    : -  . -..*  I :IT*I .+:%PCTPC+%. =    .-  = :.:        =  +     
+. =   :           :=  -+=  :   ++  F T*C:=L=C CI   % F++##E      +       --        +    -  
+: .- :   +   = :.         -++   --FT.%P* . -:FIC **==%TCE=F- - + :=-.:= .  .=+      -  - : 
+ +   . .            +    :   : *T*+P:LP*C*  *C LL+T-FTLC#=F+:  - .      .    =+  += :   + -
+. =-        :  -    +    *   FF +-T-.TCL+C-IPT%EICTORCCD#:C*:: :-.        .  -+  = =  .    
+. =         :        .+.- :%% .T%C%:.. FTI.C.*C%DPEER**R%F%E*T I    .      .=.   -     +  :
+: .   =   -    +=+    = *  =.TI%CT. - I  -=LCPEIT#%CC#+C%:ICC L=+ +.C   +    :  . :   .    
+     =  - +  =    :   -  III=. .*C-L- -L=.-:+%L%FPE=FTT+PO*OL+ .. I TI:=*  .   =    : : -  
+ :    =     +           L..L+ ..*: T.=     L:. *I TDI#L#PP=L F:T=-TI  + -:=  . -  +       :
+-   :- =  - =  L  =   L -.T CL  I-:I+   :: .T*T **F PEEDP#=TI  -  =CC= = L +    -  =: :    
+  + +   -    -     :     :  T* L- .=- L::T: - T *I FODE%=+PE.L+*-:    L:C *.C.+ =. --:  :: 
+  :   :. ==   = L     : + *L =-  *. L * L:  ..T +.:*=*TL*-D.  +*C+ L  =.  =  C :    -      
+  .    .=-   TL-L + .     +  ::=LT.= *=CL C=*T  -I E-ICPL%=PI T .C=C  * :*  =   *TL :   .  
+ --      .      =      +.     . . - TT= +C* CI*L:- =E=P-* +  L- . T+* . . = = .: L==     = 
+   +:. *  :   .    : :: = =*:=-+ -+.   ..T *  C+P=-LC: %.   = =+  :   L::**:  :- +  -      
+ --   .    =+ : L + +      =        -     :-+ L:...=.FPL+*. T  = :- +   **==L L+  -: :  =  
+      :    +  ++ * -     + .     *  ++T*. :   C*L. -+ .  -     =   L    + * + -    -       
+.=     + :+:   : :   =      + :  .      + =  + L:+T == L L  :. L     = . =L  - ++:</pre>
     </div>
-
-    <div class="artist-note">
-        The act of tearing is the shape of choice.
+    <div class="info">
+        <div class="error-line">>> PROFILE DETECTED. <<</div>
+        <div class="slogan">// UNABLE TO PROCESS // STILL HUMAN //</div>
+        <div class="slogan" style="font-size:0.7rem; margin-top:8px;">THE ACT OF TEARING IS THE SHAPE OF CHOICE</div>
+        <button id="resetGlitch">⟳ RESCAN</button>
     </div>
-    <div class="ai-subnote">
-        // AI INTERPRETATION ACTIVE //
-    </div>
+</div>
 
-    <script>
-        // 辅助函数：将文本拆分为带 data-char 属性的字符span
-        function wrapWithGlitchSpans(text) {
-            return text.split('').map(ch => {
-                if (ch === ' ') return '<span style="display: inline-block; width: 0.3em;"> </span>';
-                const safeChar = ch === '&' ? '&amp;' : (ch === '<' ? '&lt;' : (ch === '>' ? '&gt;' : ch));
-                return `<span class="char" data-char="${safeChar}">${safeChar}</span>`;
-            }).join('');
+<script>
+    (function() {
+        const preElem = document.getElementById('asciiArt');
+        const mainContent = document.getElementById('mainContent');
+        let glitchInterval = null;
+        let isResetting = false;  // 防止快速多次触发
+
+        function extraGlitch() {
+            preElem.classList.remove('glitch-pre');
+            setTimeout(() => {
+                preElem.classList.add('glitch-pre');
+            }, 30);
         }
 
-        // 构建主标题
-        const errorMajorDiv = document.getElementById('error-major');
-        const errorHtml = `
-            <div style="line-height:1.2;">${wrapWithGlitchSpans("ERROR:")}</div>
-            <div style="line-height:1.2;"><span class="red">${wrapWithGlitchSpans("HUMAN SHAPE")}</span></div>
-            <div style="line-height:1.2;"><span class="block">${wrapWithGlitchSpans("DETECTED.")}</span></div>
-        `;
-        errorMajorDiv.innerHTML = errorHtml;
+        function startRandomGlitch() {
+            if (glitchInterval) clearInterval(glitchInterval);
+            glitchInterval = setInterval(() => {
+                if (Math.random() > 0.65) {
+                    extraGlitch();
+                    preElem.style.color = '#ff3366';
+                    setTimeout(() => {
+                        preElem.style.color = '#33ffcc';
+                    }, 80);
+                }
+                if (Math.random() > 0.7) {
+                    preElem.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 2 - 1}px)`;
+                    setTimeout(() => {
+                        preElem.style.transform = 'translate(0,0)';
+                    }, 60);
+                }
+            }, 800);
+        }
 
-        // 正文拆分
-        const bodyTextDiv = document.getElementById('body-text');
-        const bodyOriginal = "UNABLE TO PROCESS.<br>The algorithmic model cannot resolve<br>the silhouette of choice.";
-        const bodyLines = bodyOriginal.split('<br>');
-        bodyTextDiv.innerHTML = bodyLines.map(line => {
-            if (line.trim() === "") return "";
-            return `<div style="margin-bottom:0.5rem;">${wrapWithGlitchSpans(line)}</div>`;
-        }).join('');
+        // 重置故障效果 (不包含屏幕消失)
+        function resetGlitchOnly() {
+            if (glitchInterval) clearInterval(glitchInterval);
+            preElem.style.transform = 'translate(0,0)';
+            preElem.style.color = '#33ffcc';
+            preElem.classList.add('glitch-pre');
+            startRandomGlitch();
+        }
 
-        // 系统状态行拆分
-        const sysStateSpan = document.getElementById('system-state');
-        const sysText = "> SYSTEM STATE : STILL HUMAN ";
-        const sysHTML = wrapWithGlitchSpans(sysText);
-        const indicator = '<span class="ai-indicator"></span>';
-        sysStateSpan.innerHTML = sysHTML + indicator;
+        // 点击 RESCAN 时，先让整个屏幕内容消失 1 秒，然后重新出现，同时重置故障效果
+        function handleRescan() {
+            if (isResetting) return;
+            isResetting = true;
+            
+            // 内容消失 (opacity 0)
+            mainContent.style.opacity = '0';
+            
+            // 1 秒后重新出现
+            setTimeout(() => {
+                mainContent.style.opacity = '1';
+                // 重置故障动画 (重新开始随机抖动)
+                resetGlitchOnly();
+                // 按钮闪烁反馈
+                const btn = document.getElementById('resetGlitch');
+                btn.style.textShadow = '0 0 8px #33ffcc';
+                setTimeout(() => {
+                    btn.style.textShadow = 'none';
+                }, 300);
+                isResetting = false;
+            }, 1000);
+        }
 
-        // 为每个字符添加随机动画延迟和时长
-        const chars = document.querySelectorAll('.char');
-        chars.forEach((ch, idx) => {
-            const delay = (idx * 0.015) % 0.2;
-            ch.style.animationDelay = `${delay}s`;
-            const duration = 0.15 + Math.random() * 0.1;
-            ch.style.animationDuration = `${duration}s`;
-        });
-    </script>
+        // 初始化故障效果
+        startRandomGlitch();
+        
+        const resetBtn = document.getElementById('resetGlitch');
+        resetBtn.addEventListener('click', handleRescan);
+        
+        // 额外的随机全屏闪白（模拟干扰）保留原功能
+        setInterval(() => {
+            if (Math.random() > 0.6 && !isResetting) {
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = 0;
+                overlay.style.left = 0;
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0, 255, 255, 0.05)';
+                overlay.style.pointerEvents = 'none';
+                overlay.style.zIndex = '999';
+                document.body.appendChild(overlay);
+                setTimeout(() => overlay.remove(), 60);
+            }
+        }, 3800);
+    })();
+</script>
 </body>
 </html>
